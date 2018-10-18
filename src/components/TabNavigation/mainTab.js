@@ -1,7 +1,9 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, StyleSheet, Image } from 'react-native';
-import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right } from 'native-base';
+import { View, StyleSheet, Image, ScrollView } from 'react-native';
+import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right, Label, ScrollableTab } from 'native-base';
+
+import CardRekomendasi from './cardRekomendasi';
 // create a component
 class MainTab extends Component {
 
@@ -29,18 +31,24 @@ class MainTab extends Component {
           }
 
         return (
-            <Container>
-                <Card style={styles.cardHeader}>
-                    <CardItem cardBody>
-                        <Image source={{uri: 'https://gadgetren.com/wp-content/uploads/2018/08/Cara-Pakai-Voucher-GoJek-Header-700x350.jpg'}} style={{height: 100,  flex: 1}}/>
-                    </CardItem>
-                </Card>
-                <Card>
-                    <CardItem cardBody>
-                        <Image source={{uri: 'https://gadgetren.com/wp-content/uploads/2018/08/Cara-Pakai-Voucher-GoJek-Header-700x350.jpg'}} style={{height: 100,  flex: 1}}/>
-                    </CardItem>
-                </Card>
-            </Container>
+            <View style={styles.container}>
+                <View style={styles.cardHeader1}>
+                    <Image style={{width: null, height: 100, borderRadius:5}} source={{uri: 'https://www.infokekinian.com/wp-content/uploads/2018/04/gojek-1.jpg'}}/>
+                </View>
+                <View style={styles.cardHeader2}>
+                    <Label style={styles.label}>Rekomendasi</Label>
+                    <View>
+                        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                           <CardRekomendasi imageSource='https://www.kasihberita.com/wp-content/uploads/2018/03/Tempat-Wisata-di-Bali.jpeg' labelWisata='Tanah Lot' />
+                           <CardRekomendasi imageSource='https://www.kasihberita.com/wp-content/uploads/2018/03/Tempat-Wisata-di-Bali.jpeg' labelWisata='Tanah Lot' />
+                           <CardRekomendasi imageSource='https://www.kasihberita.com/wp-content/uploads/2018/03/Tempat-Wisata-di-Bali.jpeg' labelWisata='Tanah Lot' />
+                           <CardRekomendasi imageSource='https://www.kasihberita.com/wp-content/uploads/2018/03/Tempat-Wisata-di-Bali.jpeg' labelWisata='Tanah Lot' />
+                           <CardRekomendasi imageSource='https://www.kasihberita.com/wp-content/uploads/2018/03/Tempat-Wisata-di-Bali.jpeg' labelWisata='Tanah Lot' />
+                           <CardRekomendasi imageSource='https://www.kasihberita.com/wp-content/uploads/2018/03/Tempat-Wisata-di-Bali.jpeg' labelWisata='Tanah Lot' />
+                        </ScrollView>
+                    </View>
+                </View>
+            </View>
         );
     }
 }
@@ -50,9 +58,22 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    cardHeader:{
-        marginTop:10
+    cardHeader1: {
+        backgroundColor:'#ffffff',
+        padding:15,
+    },
+
+    cardHeader2: {
+        marginTop: 10,
+        backgroundColor:'#ffffff',
+        padding:15,
+    },
+
+    label: {
+        fontSize:16,
+        fontWeight:'500'
     }
+
 });
 
 //make this component available to the app
