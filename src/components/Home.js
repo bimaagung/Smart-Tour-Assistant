@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
 
     header: {
         padding: 30,
-        backgroundColor:'#000000',
+        backgroundColor:'#ffffff',
         alignItems: 'center',
         
 
@@ -71,13 +71,13 @@ const TabNavigation = createMaterialTopTabNavigator({
                     style:{
                         ...Platform.select({
                             android:{
-                                backgroundColor:'#000000'
+                                backgroundColor:'#ffffff'
                             }
                         }),
                         height:60
                     },
-                activeTintColor: 'greenyellow',
-                inactiveTintColor: 'white',
+                activeTintColor: 'green',
+                inactiveTintColor: '#bbbbbb',
                 showLabel: true,
                 showIcon: true,
                 upperCaseLabel:false,
@@ -85,7 +85,7 @@ const TabNavigation = createMaterialTopTabNavigator({
                     fontSize: 12,
                   },
                 indicatorStyle: {
-                borderBottomColor: '#000000',
+                borderBottomColor: '#ffffff',
                 borderBottomWidth: 2,
                 },
             }

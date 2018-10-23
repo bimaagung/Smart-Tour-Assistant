@@ -10,7 +10,7 @@ class CardRekomendasi extends Component {
         return (
             <View style={styles.cardRekomendasi}>
                 <Image style={{width: 130, height: 130, borderRadius:5}} source={{uri: this.props.imageSource }}/>
-                <Label>{this.props.labelWisata}</Label>
+                <Label style={styles.labelRekomendasi}>{this.props.labelWisata}</Label>
             </View>
         );
     }
@@ -21,6 +21,12 @@ const styles = StyleSheet.create({
     cardRekomendasi: {
         padding:5
     },
+
+    labelRekomendasi: {
+        marginVertical: 10,
+        fontWeight:'500',
+        fontSize:16
+    }
 });
 
 //make this component available to the app
