@@ -28,7 +28,18 @@ class MainDetailWisata extends Component {
             <Container>
                 <Tabs>
                 <Tab heading={ <TabHeading style={{backgroundColor:'#42b549'}}><Icon name="information-circle" /></TabHeading>}>
-                    <Tab1 />
+                    <Tab1 
+                        labelDetail={this.props.label}
+                        fotoDetail={this.props.foto}
+                        tempatDetail={this.props.tempat}
+                        ratingDetail={this.props.rating}
+                        deskripsiDetail={this.props.deskripsi}
+                        jarakDetail={this.props.jarak}
+                        jalanDetail={this.props.jalan}
+                        motorDetail={this.props.motor}
+                        mobilDetail={this.props.mobil}
+                        suhuDetail={this.props.suhu}       
+                    />
                 </Tab>
                 <Tab heading={ <TabHeading style={{backgroundColor:'#42b549'}}><Icon name="images" /></TabHeading>}>
                     <Tab2 />

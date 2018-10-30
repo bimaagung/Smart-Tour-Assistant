@@ -1,7 +1,7 @@
 //import liraries
 import React, { Component } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
-import {Icon, Text, Label, Button} from 'native-base';
+import {Icon, Text, Label, Button, TabHeading} from 'native-base';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 
 // create a component
@@ -44,7 +44,7 @@ class CardWisata extends Component {
                 <Label style={styles.labelWisata}>{this.props.labelWisata}</Label>
                 <Label style={styles.labelTempat}>{this.props.namaTempat}</Label>  
                 <View style={styles.buttonWisata}>
-                    <Button rounded success>
+                    <Button rounded success onPress={this.props.moveDetail}>
                         <Text style={{fontWeight:'bold'}}>Lihat!</Text> 
                     </Button>
                 </View>

@@ -11,20 +11,17 @@ class InfoWisata extends Component {
             <ScrollView vertical={true} showsVerticalScrollIndicator={false}>
                 <View style={styles.container}>
                     <View style={styles.containerHeader}>
-                        <Image style={{width: null, height: 150, borderRadius:5}} source={{uri: 'https://www.kasihberita.com/wp-content/uploads/2018/03/Tempat-Wisata-di-Bali.jpeg' }}/>
-                        <Label style={styles.labelWisata}>Pantai Tanah Lot</Label>
-                        <Text>Kuta - Bali</Text>
+                        <Image style={{width: null, height: 150, borderRadius:5}} source={{uri: this.props.fotoDetail }}/>
+                        <Label style={styles.labelWisata}>{this.props.labelDetail}</Label>
+                        <Text>{this.props.tempatDetail}</Text>
                         <Text style={styles.textDeskripsi}>
-                            Pantai Kuta terkenal memiliki ombak yang bagus untuk olahraga selancar (surfing)[2],
-                            terutama bagi peselancar pemula.Selain keindahan pantai, wisata pantai Kuta juga menawarkan 
-                            berbagai jenis hiburan seperti bar, restoran, pertokoan, restoran, hotel, dan 
-                            toko-toko kelontong, serta pedagang kaki lima di sepanjang pantai menuju pantai Legian.
+                           {this.props.deskripsiDetail}
                         </Text>
                         <View style={styles.ratingWisata}>
                         <AirbnbRating
                             count={5}
                             reviews={false}
-                            defaultRating={3}
+                            defaultRating={this.props.ratingDetail}
                             size={25}
                         />
                         </View>
@@ -39,7 +36,7 @@ class InfoWisata extends Component {
                         <Text>Jarak</Text>
                         </Body>
                         <Right>
-                        <Text>20 Km/Jam</Text>
+                        <Text>{this.props.jarakDetail} Km/Jam</Text>
                         </Right>
                     </ListItem>
                     <ListItem icon>
@@ -62,7 +59,7 @@ class InfoWisata extends Component {
                         <Text>Jalan Kaki</Text>
                         </Body>
                         <Right>
-                        <Text>20 Jam</Text>
+                        <Text>{this.props.jalanDetail} Jam</Text>
                         </Right>
                     </ListItem>
                     <ListItem icon>
@@ -75,7 +72,7 @@ class InfoWisata extends Component {
                         <Text>Motor</Text>
                         </Body>
                         <Right>
-                        <Text>20 Jam</Text>
+                        <Text>{this.props.motorDetail} Jam</Text>
                         </Right>
                     </ListItem>
                     <ListItem icon>
@@ -88,7 +85,7 @@ class InfoWisata extends Component {
                         <Text>Mobil</Text>
                         </Body>
                         <Right>
-                        <Text>20 Jam</Text>
+                        <Text>{this.props.mobilDetail} Jam</Text>
                         </Right>
                     </ListItem>
                     <ListItem icon>
@@ -101,7 +98,7 @@ class InfoWisata extends Component {
                         <Text>Suhu</Text>
                         </Body>
                         <Right>
-                        <Text>20C</Text>
+                        <Text>{this.props.suhuDetail} °C</Text>
                         </Right>
                     </ListItem>
                 </View>

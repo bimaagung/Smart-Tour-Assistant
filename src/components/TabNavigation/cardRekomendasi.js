@@ -10,7 +10,7 @@ class CardRekomendasi extends Component {
         return (
             <View style={styles.cardRekomendasi}>
                 <Image style={{width: 130, height: 130, borderRadius:5}} source={{uri: this.props.imageSource }}/>
-                <Label style={styles.labelRekomendasi}>{this.props.labelWisata}</Label>
+                <Text numberOfLines={1} style={styles.labelRekomendasi}>{this.props.labelWisata}</Text>
             </View>
         );
     }
@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
     labelRekomendasi: {
         marginVertical: 10,
         fontWeight:'500',
-        fontSize:16
+        fontSize:14,
+        width:130
     }
 });
 

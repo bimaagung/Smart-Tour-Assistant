@@ -24,6 +24,10 @@ class ProfilTab extends Component {
         )
     }
 
+    componentDidMount(){
+        this.props.navigation.navigate('Home');
+    }
+
     render() {
         if (!this.state.isReady) {
             return <Expo.AppLoading />;
