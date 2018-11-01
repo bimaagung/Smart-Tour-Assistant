@@ -60,17 +60,30 @@ class DetailWisata extends Component {
           })
       }
 
+      async requestCameraPermission() {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.LOCATION,
+            {
+              'title': 'Location Permission',
+              'message': 'Cool Photo App needs access to your camera ' +
+                         'so you can take awesome pictures.'
+            }
+          )
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            console.log("You can use the location")
+          } else {
+            console.log("Location permission denied")
+          }
+        } catch (err) {
+          console.warn(err)
+        }
+      }
+
       async componentWillMount() {
+
+        this.requestCameraPermission()
         
-        // const { status } = await Expo.Permissions.askAsync(Expo.Permissions.LOCATION);
-
-        // if (status === 'granted') {
-        //     const location = await Expo.Location.getCurrentPositionAsync({
-        //     enableHighAccuracy: true,
-        //     });
-        //     return location;
-        // }
-
         navigator.geolocation.getCurrentPosition((position) => {
             const lat = position.coords.latitude
             const lon = position.coords.longitude
