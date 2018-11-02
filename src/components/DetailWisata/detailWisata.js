@@ -1,31 +1,24 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableHighlight, Dimensions, Alert,  PermissionsAndroid, Platform} from 'react-native';
+import { View, StyleSheet, TouchableHighlight, Dimensions, Alert,  PermissionsAndroid, Platform } from 'react-native';
 import { Icon, Header, Item, Input, Button, Text, Tabs  } from 'native-base';
 import MapView from 'react-native-maps';
 import { Constants, Location, Permissions } from 'expo';
 import SlidingPanel from 'react-native-sliding-up-down-panels'; //https://www.npmjs.com/package/react-native-sliding-up-down-panel
 // create a component
+
 import MainDetailWisata from './mainDetailWisata';
 
 const { width, height } = Dimensions.get('window');
 
-// const SCREEN_HEIGHT = height
-// const SCREEN_WIDTH = width
-// const ASPECT_RATIO = width / height
-// const LATTITUDE_DELTA = 0.0922
-// const LONGITUDE_DELTA = LONGITUDE_DELTA * ASPECT_RATIO
 class DetailWisata extends Component {
     
     constructor(props){
         super(props)
         this.state = {
-            region: {
-                latitude: null,
-                longitude: null,
-                latitudeDelta: null,
-                longitudeDelta: null
-            },
+            wathID: null,
+            location: null,
+            errorMessage: null,
             isReady: false,
             TextId:'',
             TextLabel:'',
@@ -43,61 +36,22 @@ class DetailWisata extends Component {
     }
 
 
-      calcDelta(lat, lon, accuracy) {
-          const oneDegreeOfLongitudInMeters = 111.32;
-          const circumference = (400075 / 360)
-
-          const latDelta = accuracy * (1 / (Math.cos(lat)* circumference))
-          const lonDelta = (accuracy / oneDegreeOfLongitudInMeters)
-
-          this.setState({
-              region: {
-                  latitude: lat,
-                  longitude: lon,
-                  latitudeDelta: latDelta,
-                  longitudeDelta: lonDelta
-              }
-          })
-      }
-
-      async requestCameraPermission() {
-        try {
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.LOCATION,
-            {
-              'title': 'Location Permission',
-              'message': 'Cool Photo App needs access to your camera ' +
-                         'so you can take awesome pictures.'
-            }
-          )
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            console.log("You can use the location")
-          } else {
-            console.log("Location permission denied")
-          }
-        } catch (err) {
-          console.warn(err)
-        }
-      }
-
+    
       async componentWillMount() {
 
-        this.requestCameraPermission()
-        
-        navigator.geolocation.getCurrentPosition((position) => {
-            const lat = position.coords.latitude
-            const lon = position.coords.longitude
-            const accuracy = position.coords.accuracy
-            this.calcDelta(lat, lon, accuracy)
-        },
-        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-        )
+        if (Platform.OS === 'android' && !Constants.isDevice) {
+            this.setState({
+              errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
+            });
+          } else {
+            this._getLocationAsync();
+          }
+ 
         
       await Expo.Font.loadAsync({
         'Roboto': require('native-base/Fonts/Roboto.ttf'),
         'Roboto_medium': require('native-base/Fonts/Roboto_medium.ttf'),
       });
-
       this.setState({
             isReady:true,
             TextId: this.props.navigation.state.params.id,
@@ -113,63 +67,44 @@ class DetailWisata extends Component {
             TextMobil: this.props.navigation.state.params.mobil,
             TextSuhu: this.props.navigation.state.params.suhu
         })
+       
+        } 
 
-        }
+        async _getLocationAsync() {
+            let { status } = await Permissions.askAsync(Permissions.LOCATION);
+            if (status !== 'granted') {
+              this.setState({
+                errorMessage: 'Permission to access location was denied',
+              });
+            }
         
-        componentWillUnmount(){
-            navigator.geolocation.clearWatch(this.watchID)
-         }
+            const location = await Location.getCurrentPositionAsync(
+                {'enableHighAccuracy':true,'maximumAge':1000});
 
-         marker(){
-             return {
-                 latitude: this.state.region.latitude,
-                 longitude: this.state.region.longitude,
-             }
-         }
+            // const wathID = await Location.watchPositionAsync({'enableHighAccuracy':true, timeInterval:20000, distanceInterval: 1})
+            this.setState({ location });
+          };
+
 
 
     render() {
 
+        let text = 'Waiting..';
+        if (this.state.errorMessage) {
+          text = this.state.errorMessage;
+        } else if (this.state.location) {
+          text = JSON.stringify(this.state.location);
+        }
+
+
+        
+        if (!this.state.isReady) {
+            return <Expo.AppLoading />;
+          }
+
         return (
             <View style={styles.container}>
-                {this.state.region.latitude ?
-                 <MapView
-                    style={styles.map}
-                    region={this.state.region}>
-
-                    <MapView.Marker
-                        coordinate={this.marker()}
-                        title = "Disini"
-                        description = "Home"
-                    >
-                         <View style={styles.radius}>
-                            <View style={styles.marker} />
-                        </View>
-                    </MapView.Marker>
-                </MapView> : null}
-
-                {/* <MapView
-                    style={styles.map}
-                    initialRegion={{
-                        latitude: 37.78825,
-                        longitude: -122.4324,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
-                    }}
-                >
-                    <MapView.Marker
-                        coordinate={{
-                        latitude: 37.78825,
-                        longitude: -122.4324,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
-                    }}
-                >
-                        <View style={styles.radius}>
-                            <View style={styles.marker} />
-                        </View>
-                    </MapView.Marker>
-                </MapView> */}
+                <Text style={styles.paragraph}>{text}</Text>
 
                 <SlidingPanel
                     slidingPanelLayoutHeight={100}
