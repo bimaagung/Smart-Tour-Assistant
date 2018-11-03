@@ -1,14 +1,16 @@
 //import liraries
+import Expo from 'expo';
 import React, { Component } from 'react';
 import { View, StyleSheet, TouchableHighlight, Dimensions, Alert,  PermissionsAndroid, Platform } from 'react-native';
-import { Icon, Header, Item, Input, Button, Text, Tabs  } from 'native-base';
-import MapView from 'react-native-maps';
-import { Constants, Location, Permissions } from 'expo';
+import { Icon} from 'native-base';
+import { Constants, Location, Permissions, MapView } from 'expo';
+
 import SlidingPanel from 'react-native-sliding-up-down-panels'; //https://www.npmjs.com/package/react-native-sliding-up-down-panel
 // create a component
 
 import MainDetailWisata from './mainDetailWisata';
 
+const GEOLOCATION_OPTIONS = { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 };
 const { width, height } = Dimensions.get('window');
 
 class DetailWisata extends Component {
@@ -16,9 +18,12 @@ class DetailWisata extends Component {
     constructor(props){
         super(props)
         this.state = {
-            wathID: null,
-            location: null,
-            errorMessage: null,
+            location: { 
+                coords: {
+                    latitude: 0,
+                    longitude: 0
+                }
+            },
             isReady: false,
             TextId:'',
             TextLabel:'',
@@ -29,25 +34,20 @@ class DetailWisata extends Component {
             TextDeskripsi:'',
             TextJarak:'',
             TextJalan:'',
-            TextMotor:'',
             TextMobil:'',
+            TextMotor:'',
             TextSuhu:'',
+            location: null,
+            errorMessage: null,
         }
     }
 
 
     
       async componentWillMount() {
-
-        if (Platform.OS === 'android' && !Constants.isDevice) {
-            this.setState({
-              errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
-            });
-          } else {
-            this._getLocationAsync();
-          }
- 
         
+      this.watchLocationAsync()
+ 
       await Expo.Font.loadAsync({
         'Roboto': require('native-base/Fonts/Roboto.ttf'),
         'Roboto_medium': require('native-base/Fonts/Roboto_medium.ttf'),
@@ -68,44 +68,45 @@ class DetailWisata extends Component {
             TextSuhu: this.props.navigation.state.params.suhu
         })
        
-        } 
-
-        async _getLocationAsync() {
-            let { status } = await Permissions.askAsync(Permissions.LOCATION);
-            if (status !== 'granted') {
-              this.setState({
-                errorMessage: 'Permission to access location was denied',
-              });
-            }
+        }
         
-            const location = await Location.getCurrentPositionAsync(
-                {'enableHighAccuracy':true,'maximumAge':1000});
+        async watchLocationAsync() {
+            try{
+                const { status } = await Permissions.askAsync(Permissions.LOCATION);
+                if (status === 'granted') {
+                    Location.watchPositionAsync(GEOLOCATION_OPTIONS, this.locationChanged);
+                    
+                } else {
+                console.log('Location permission not granted');
+                }
+            }catch(err){
+                console.log('Perrmissions gagal', err)
+            }
+          }
 
-            // const wathID = await Location.watchPositionAsync({'enableHighAccuracy':true, timeInterval:20000, distanceInterval: 1})
-            this.setState({ location });
-          };
-
+        locationChanged = (location) => {
+            region = {
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            },
+            this.setState({location, region})
+          }
 
 
     render() {
-
-        let text = 'Waiting..';
-        if (this.state.errorMessage) {
-          text = this.state.errorMessage;
-        } else if (this.state.location) {
-          text = JSON.stringify(this.state.location);
-        }
-
-
-        
         if (!this.state.isReady) {
             return <Expo.AppLoading />;
           }
 
         return (
             <View style={styles.container}>
-                <Text style={styles.paragraph}>{text}</Text>
-
+                <MapView
+                    style={styles.map}
+                    showsUserLocation={true}
+                    region={this.state.region}
+                />
                 <SlidingPanel
                     slidingPanelLayoutHeight={100}
                     AnimationSpeed = {300}
@@ -168,7 +169,7 @@ const styles = StyleSheet.create({
         bottom:0,
         top:0,
         right:0,
-
+        flex: 0.5
     },
 
     headerLayoutStyle: {
