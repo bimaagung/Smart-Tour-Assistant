@@ -2,22 +2,42 @@
 import Expo from 'expo';
 import React, { Component } from 'react';
 import { View, StyleSheet, TouchableHighlight, Dimensions, Alert,  PermissionsAndroid, Platform } from 'react-native';
-import { Icon} from 'native-base';
-import { Constants, Location, Permissions, MapView } from 'expo';
+import { Icon, Text} from 'native-base';
+import { Constants, Location, Permissions } from 'expo';
+import MapView, { Polyline } from 'react-native-maps'
+const polyline =  require('@mapbox/polyline');
+
 
 import SlidingPanel from 'react-native-sliding-up-down-panels'; //https://www.npmjs.com/package/react-native-sliding-up-down-panel
 // create a component
 
 import MainDetailWisata from './mainDetailWisata';
 
-const GEOLOCATION_OPTIONS = { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 };
+const GEOLOCATION_OPTIONS = { enableHighAccuracy: true, timeInterval: 5000};
 const { width, height } = Dimensions.get('window');
 
 class DetailWisata extends Component {
     
     constructor(props){
         super(props)
+        Location.watchPositionAsync(GEOLOCATION_OPTIONS, this.locationChanged);
         this.state = {
+            initialRegion:{
+                latitude:41.0082,
+                longitude: 28.9784,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421
+            },
+            destination:[
+                {
+                    latitude: 110.398393,
+                    longitude: -6.995922
+                },
+                {
+                    latitude: 110.347616,
+                    longitude: -7.037169
+                }
+            ],
             location: { 
                 coords: {
                     latitude: 0,
@@ -39,14 +59,22 @@ class DetailWisata extends Component {
             TextSuhu:'',
             location: null,
             errorMessage: null,
+            coords: [],
+            locationuser:[]
         }
     }
 
+    async componentWillMount(){
+        Location.watchPositionAsync(GEOLOCATION_OPTIONS, this.locationChanged);
+    }
 
-    
-      async componentWillMount() {
+      async componentDidMount() {
+        //const loc = Location.watchPositionAsync(GEOLOCATION_OPTIONS, this.locationChanged);
+        //console.log('location',loc)
         
-      this.watchLocationAsync()
+    //   this.watchLocationAsync()
+     // this.fecthInitialRoute()
+     Location.watchPositionAsync(GEOLOCATION_OPTIONS, this.locationChanged);
  
       await Expo.Font.loadAsync({
         'Roboto': require('native-base/Fonts/Roboto.ttf'),
@@ -70,19 +98,31 @@ class DetailWisata extends Component {
        
         }
         
-        async watchLocationAsync() {
-            try{
-                const { status } = await Permissions.askAsync(Permissions.LOCATION);
-                if (status === 'granted') {
-                    Location.watchPositionAsync(GEOLOCATION_OPTIONS, this.locationChanged);
-                    
-                } else {
-                console.log('Location permission not granted');
-                }
-            }catch(err){
-                console.log('Perrmissions gagal', err)
-            }
+        // async watchLocationAsync() {
+        //     try{
+        //         const { status } = await Permissions.askAsync(Permissions.LOCATION);
+        //         if (status === 'granted') {
+        //             Location.watchPositionAsync(GEOLOCATION_OPTIONS, this.locationChanged);   
+        //         } else {
+        //         console.log('Location permission not granted');
+        //         }
+        //     }catch(err){
+        //         console.log('Perrmissions gagal', err)
+        //     }
+        //   }
+
+        // async shouldComponentUpdate(){
+        //     Location.watchPositionAsync(GEOLOCATION_OPTIONS, this.locationChanged); 
+        // }
+
+        async componentWillUpdate(){
+            Location.watchPositionAsync(GEOLOCATION_OPTIONS, this.locationChanged);    
+           }
+
+        async componentDidUpdate(){
+            Location.watchPositionAsync(GEOLOCATION_OPTIONS, this.locationChanged);
           }
+
 
         locationChanged = (location) => {
             region = {
@@ -91,22 +131,59 @@ class DetailWisata extends Component {
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             },
-            this.setState({location, region})
+
+            console.log('region123',region)
+            this.setState({location, region});
+            // this.fecthInitialRoute( ,"-7.124616, 109.950570")    
+
+          }
+
+          async fecthInitialRoute(){
+              const startLoc = "-7.135611,109.941861"
+              const destinationLoc = "-7.124616, 109.950570"
+
+              try {
+                const resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }&key=AIzaSyDO5Sn82Z2fOrh6seJMnWj6nY28Sk6dYng`)
+                const respJson = await resp.json();
+                const points = polyline.decode(respJson.routes[0].overview_polyline.points);
+                const coords = points.map((point, index) => ({latitude : point[0], longitude : point[1] }))
+                this.setState({coords: coords})
+                console.log('coords',coords)
+
+              }catch(error) {
+                console.log('fecthInitialRoute error', error)
+            }
           }
 
 
     render() {
+        let text = 'Waiting..';
         if (!this.state.isReady) {
             return <Expo.AppLoading />;
           }
+        
+          if (this.state.region) {
+                text = JSON.stringify(this.state.region);
+          }     
+         
+          
+          const {initialRegion,coords} = this.state;
 
         return (
             <View style={styles.container}>
-                <MapView
+            <Text>{text}</Text>
+                 {/* <MapView
                     style={styles.map}
                     showsUserLocation={true}
                     region={this.state.region}
-                />
+                > 
+                    <Polyline
+                        coordinates={coords}
+                        strokeColor="red"
+                        strokeWidth={5}
+                    />
+                </MapView>  */}
+
                 <SlidingPanel
                     slidingPanelLayoutHeight={100}
                     AnimationSpeed = {300}
